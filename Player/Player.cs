@@ -130,11 +130,11 @@ public class Player : MonoBehaviour {
             Block();
         else if (Input.GetButtonDown("Roll") && !_rolling && !_animator.GetBool("WallSlide"))
             Roll();
-        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerInfo.Upgrades[1])
+        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck("JumpDownUpgrade"))
             Drop();
-        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerInfo.Upgrades[3])
+        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerUpgrade.UpgradeCheck("WallJumpUpgrade"))
             Jump();
-        else if (Input.GetButtonDown("ChangeWeapon") && PlayerInfo.Upgrades[2])
+        else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck("HaveGun"))
             ChangeWeapon();
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
             Run();
@@ -176,12 +176,21 @@ public class Player : MonoBehaviour {
         _rigidbody.velocity = new Vector2(_facingDirection * _rollForce, _rigidbody.velocity.y);
         //gameObject.layer = 9;
     }
+    private bool drop = false;
     private void Drop()
     {
-        print("drop");
-        _animator.SetBool("Drop", true);
         _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -1 * _dropForce);
-        _dropParticle.Play();
+        drop = true;
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (drop)
+        {
+            print("drop");
+            _animator.SetBool("Drop", true);
+            _dropParticle.Play();
+            drop = false;
+        }
     }
     private void Jump()
     {

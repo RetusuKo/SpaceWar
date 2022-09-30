@@ -3,7 +3,7 @@ using UnityEngine.Audio;
 
 public class TakeUpgrade : MonoBehaviour
 {
-    [SerializeField] private int _upgradeNumber;
+    [SerializeField] private string _upgradeName;
     [SerializeField] private AudioClip _collectClip;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -12,7 +12,7 @@ public class TakeUpgrade : MonoBehaviour
         {
             var _audio = collision.GetComponent<AudioSource>();
             _audio.PlayOneShot(_collectClip);
-            PlayerInfo.Upgrades[_upgradeNumber] = true;
+            PlayerUpgrade.UpgradeChangeBool(_upgradeName);
             Destroy(gameObject);
         }
     }
