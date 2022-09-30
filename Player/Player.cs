@@ -130,11 +130,11 @@ public class Player : MonoBehaviour {
             Block();
         else if (Input.GetButtonDown("Roll") && !_rolling && !_animator.GetBool("WallSlide"))
             Roll();
-        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerInfo.Upgrades[1])
+        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck("JumpDownUpgrade"))
             Drop();
-        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerInfo.Upgrades[3])
+        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerUpgrade.UpgradeCheck("WallJumpUpgrade"))
             Jump();
-        else if (Input.GetButtonDown("ChangeWeapon") && PlayerInfo.Upgrades[2])
+        else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck("HaveGun"))
             ChangeWeapon();
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
             Run();
