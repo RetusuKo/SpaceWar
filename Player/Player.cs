@@ -176,12 +176,21 @@ public class Player : MonoBehaviour {
         _rigidbody.velocity = new Vector2(_facingDirection * _rollForce, _rigidbody.velocity.y);
         //gameObject.layer = 9;
     }
+    private bool drop = false;
     private void Drop()
     {
-        print("drop");
-        _animator.SetBool("Drop", true);
         _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, -1 * _dropForce);
-        _dropParticle.Play();
+        drop = true;
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (drop)
+        {
+            print("drop");
+            _animator.SetBool("Drop", true);
+            _dropParticle.Play();
+            drop = false;
+        }
     }
     private void Jump()
     {
