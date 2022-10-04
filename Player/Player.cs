@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour, IDatePersistance
+{
     [Header("PlayerInfo")]
     [SerializeField] private float _speed = 4.0f;
     [SerializeField] private float _jumpForce = 7.5f;
@@ -130,11 +131,11 @@ public class Player : MonoBehaviour {
             Block();
         else if (Input.GetButtonDown("Roll") && !_rolling && !_animator.GetBool("WallSlide"))
             Roll();
-        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck("JumpDownUpgrade"))
+        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[1]))
             Drop();
-        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerUpgrade.UpgradeCheck("WallJumpUpgrade"))
+        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[3]))
             Jump();
-        else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck("HaveGun"))
+        else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[2]))
             ChangeWeapon();
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
             Run();
@@ -260,5 +261,15 @@ public class Player : MonoBehaviour {
             dust.transform.localScale = new Vector3(_facingDirection, 1, 1);
         }
         AE_ResetRoll();
+    }
+
+    public void LoadDate(GameData data)
+    {
+        gameObject.transform.position = data.PlayerPosition;
+    }
+
+    public void SaveData(GameData data)
+    {
+        data.PlayerPosition = gameObject.transform.position;
     }
 }

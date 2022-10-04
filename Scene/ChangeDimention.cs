@@ -14,7 +14,7 @@ public class ChangeDimention : MonoBehaviour
     }
     private void ChangeDime()
     {
-        if (Input.GetButtonDown("ChangeDimention") && PlayerUpgrade.UpgradeCheck("TeleportingUpgrade"))
+        if (Input.GetButtonDown("ChangeDimention") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[0]))
         {
             if (7 >= _curentScene.name.Length)
             {

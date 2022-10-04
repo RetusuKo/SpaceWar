@@ -2,28 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerUpgrade : MonoBehaviour
+public class PlayerUpgrade : MonoBehaviour, IDatePersistance
 {
-    private void Awake()
-    {
-        UpgradePut();
-    }
-    private static Dictionary<string, bool> Upgrades = new Dictionary<string, bool>();
+    private static Dictionary<string, bool> _upgrades = new Dictionary<string, bool>();
+    public static string[] UpgradesName = new string[] { "TeleportingUpgrade", "JumpDownUpgrade", "HaveGun", "WallJumpUpgrade", "GunExplode" };
     public static void UpgradePut()
     {
-        Upgrades.Add("TeleportingUpgrade", false);
-        Upgrades.Add("JumpDownUpgrade", false);
-        Upgrades.Add("HaveGun", false);
-        Upgrades.Add("WallJumpUpgrade", false);
-        Upgrades.Add("GunExplode", false);
+        for (int i = 0; i < UpgradesName.Length; i++)
+            _upgrades.Add(UpgradesName[i], false);
     }
     public static void UpgradeChangeBool(string upgradeName, bool upgrade = true)
     {
-        Upgrades[upgradeName] = upgrade;
+        _upgrades[upgradeName] = upgrade;
     }
     public static bool UpgradeCheck(string upgradeName)
     {
-        Upgrades.TryGetValue(upgradeName, out bool returnValue);
+        _upgrades.TryGetValue(upgradeName, out bool returnValue);
         return returnValue;
+    }
+    bool fuck;
+    public void LoadDate(GameData data)
+    {
+        for (int i = 0; i < _upgrades.Count; i++)
+            if (data.PlayerUpgrade[UpgradesName[i]])
+                _upgrades[UpgradesName[i]] = true;
+    }
+    public void SaveData(GameData data)
+    {
+        data.PlayerUpgrade.Clear();
+        for (int i = 0; i < _upgrades.Count; i++)
+            data.PlayerUpgrade.Add(UpgradesName[i], _upgrades[UpgradesName[i]]);
     }
 }
