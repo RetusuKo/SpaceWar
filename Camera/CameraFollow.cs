@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class CameraFollow : MonoBehaviour, IDatePersistance
 {
     [SerializeField] private Vector2 _followOffset;
     [SerializeField] private GameObject _followObject;
@@ -50,5 +50,15 @@ public class CameraFollow : MonoBehaviour
         Gizmos.color = Color.blue;
         Vector2 border = CalculateThreshold();
         Gizmos.DrawWireCube(transform.position, new Vector3(border.x * 2, border.y * 2, 1));
+    }
+
+    public void LoadDate(GameData data)
+    {
+        gameObject.transform.position = data.PlayerPosition;
+    }
+
+    public void SaveData(GameData data)
+    {
+
     }
 }
