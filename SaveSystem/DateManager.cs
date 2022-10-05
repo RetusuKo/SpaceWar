@@ -9,6 +9,7 @@ public class DateManager : MonoBehaviour
     [SerializeField] private string fileName;
 
     [SerializeField] private bool _useEncryption = true;
+
     private GameData _gameDate;
 
     private List<IDatePersistance> _datePersistanceObject;
@@ -23,6 +24,7 @@ public class DateManager : MonoBehaviour
             Debug.LogError("Morethan 1 DateManager");
         }
         instance = this;
+        PlayerUpgrade.UpgradePut();
     }
     private void Start()
     {

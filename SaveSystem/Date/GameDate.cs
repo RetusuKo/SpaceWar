@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
-    public Vector3 PlayerPosition;
+    public Vector3 PlayerPosition = new Vector3(0,0,0);
     public SerializableDictonary<string, bool> PlayerUpgrade;
 
     public GameData()

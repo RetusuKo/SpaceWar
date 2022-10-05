@@ -54,7 +54,7 @@ public class CameraFollow : MonoBehaviour, IDatePersistance
 
     public void LoadDate(GameData data)
     {
-        gameObject.transform.position = data.PlayerPosition;
+        gameObject.transform.position = data.PlayerPosition + new Vector3(0,0, -10);
     }
 
     public void SaveData(GameData data)

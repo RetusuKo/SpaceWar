@@ -6,12 +6,7 @@ public class TakeUpgrade : MonoBehaviour, IDatePersistance
     [SerializeField] private string _upgradeName;
     [SerializeField] private AudioClip _collectClip;
 
-    private bool _taken = false;
-    private void Start()
-    {
-        if(_taken)
-            Destroy(gameObject);
-    }
+    [SerializeField] private bool _taken = false;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Player")
@@ -27,6 +22,8 @@ public class TakeUpgrade : MonoBehaviour, IDatePersistance
     public void LoadDate(GameData data)
     {
         data.PlayerUpgrade.TryGetValue(_upgradeName, out _taken);
+        if (_taken)
+            Destroy(gameObject);
     }
 
     public void SaveData(GameData data)

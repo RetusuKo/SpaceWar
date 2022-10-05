@@ -20,12 +20,14 @@ public class PlayerUpgrade : MonoBehaviour, IDatePersistance
         _upgrades.TryGetValue(upgradeName, out bool returnValue);
         return returnValue;
     }
-    bool fuck;
     public void LoadDate(GameData data)
     {
-        for (int i = 0; i < _upgrades.Count; i++)
-            if (data.PlayerUpgrade[UpgradesName[i]])
-                _upgrades[UpgradesName[i]] = true;
+        if (data.PlayerUpgrade.Count > 0)
+        {
+            for (int i = 0; i < _upgrades.Count; i++)
+                if (data.PlayerUpgrade[UpgradesName[i]])
+                    _upgrades[UpgradesName[i]] = true;
+        }
     }
     public void SaveData(GameData data)
     {

@@ -127,13 +127,13 @@ public class Player : MonoBehaviour, IDatePersistance
     {
         if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling)
             Atack();
-        else if (Input.GetButtonDown("Block") && !_rolling  && !PlayerInfo.DoNotTakeDamage)
+        else if (Input.GetButtonDown("Block") && !_rolling && !PlayerInfo.DoNotTakeDamage)
             Block();
         else if (Input.GetButtonDown("Roll") && !_rolling && !_animator.GetBool("WallSlide"))
             Roll();
         else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[1]))
             Drop();
-        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetBool("WallSlide") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[3]))
+        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Wall Slide") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[3]))
             Jump();
         else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[2]))
             ChangeWeapon();
@@ -265,7 +265,8 @@ public class Player : MonoBehaviour, IDatePersistance
 
     public void LoadDate(GameData data)
     {
-        gameObject.transform.position = data.PlayerPosition;
+        if (data.PlayerPosition != null)
+            gameObject.transform.position = data.PlayerPosition;
     }
 
     public void SaveData(GameData data)
