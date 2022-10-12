@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerUpgrade : MonoBehaviour, IDatePersistance
 {
@@ -34,5 +35,6 @@ public class PlayerUpgrade : MonoBehaviour, IDatePersistance
         data.PlayerUpgrade.Clear();
         for (int i = 0; i < _upgrades.Count; i++)
             data.PlayerUpgrade.Add(UpgradesName[i], _upgrades[UpgradesName[i]]);
+        data.SaveSceneName = SceneManager.GetActiveScene().name;
     }
 }

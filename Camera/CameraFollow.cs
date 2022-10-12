@@ -11,12 +11,26 @@ public class CameraFollow : MonoBehaviour, IDatePersistance
 
     private Vector2 _threshold;
     private Rigidbody2D _rigidBody;
+    private bool _move = true;
     void Start()
     {
-        _threshold = CalculateThreshold();
-        _rigidBody = _followObject.GetComponent<Rigidbody2D>();
+        if (_followObject == null)
+        {
+            _move = false;
+        }
+        else
+        {
+            _threshold = CalculateThreshold();
+            _rigidBody = _followObject.GetComponent<Rigidbody2D>();
+            _move = true;
+        }
     }
     void FixedUpdate()
+    {
+        if (_move)
+            MoveCamera();
+    }
+    private void MoveCamera()
     {
         Vector2 follow = _followObject.transform.position;
         float xDifference = Vector2.Distance(Vector2.right * transform.position.x, Vector2.right * follow.x);
@@ -54,7 +68,7 @@ public class CameraFollow : MonoBehaviour, IDatePersistance
 
     public void LoadDate(GameData data)
     {
-        gameObject.transform.position = data.PlayerPosition + new Vector3(0,0, -10);
+        gameObject.transform.position = data.PlayerPosition + new Vector3(0, 0, -10);
     }
 
     public void SaveData(GameData data)
