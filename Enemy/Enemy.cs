@@ -25,6 +25,7 @@ public abstract class Enemy : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
         gameObject.tag = "Enemy";
+        gameObject.layer = 11;
     }
     public abstract void TakeDamage(float takenDamage);
     protected void Initalize(float speed, float damage, float health)

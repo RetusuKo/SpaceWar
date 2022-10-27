@@ -10,11 +10,13 @@ public class GameData
     public Vector3 PlayerPosition = new Vector3(0,0,0);
     public SerializableDictonary<string, bool> PlayerUpgrade;
     public string SaveSceneName;
+    public float Health;
 
     public GameData()
     {
         PlayerUpgrade = new SerializableDictonary<string, bool>();
         SaveSceneName = "Lvl 1";
+        Health = 3;
     }
     public int GetPercentageComplate()
     {

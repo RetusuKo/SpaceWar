@@ -114,9 +114,8 @@ public class FileDateHandler
                 Debug.LogWarning("Delte dont exist data");
             }
         }
-        catch (Exception a)
+        catch
         {
-
             throw;
         }
     }

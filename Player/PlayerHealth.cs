@@ -1,11 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDatePersistance
 {
-    private float _health = 3;
+    [SerializeField] private float _health = 3;
 
+    [SerializeField] private List<Image> _healtImage;
+
+    private void Start()
+    {
+        for (int i = 0; i < _healtImage.Count; i++)
+            if (i < _health)
+                _healtImage[i].gameObject.SetActive(true);
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         TakeDamageEnemy(collision);
@@ -32,17 +41,28 @@ public class PlayerHealth : MonoBehaviour
     {
 
         _health -= damage;
-        StartCoroutine(WaitAfterDDamage());
+        StartCoroutine(WaitAfterDamage());
         Player player = GetComponent<Player>();
         if (_health >= 1)
             player.Hurt();
         else if (_health <= 0)
             player.Dead();
+        _healtImage[(int)_health].enabled = false;
     }
-    private IEnumerator WaitAfterDDamage()
+    private IEnumerator WaitAfterDamage()
     {
         PlayerInfo.DoNotTakeDamage = true;
         yield return new WaitForSeconds(PlayerInfo.NoDomageMiliSec);
         PlayerInfo.DoNotTakeDamage = false;
+    }
+
+    public void LoadDate(GameData data)
+    {
+        _health = data.Health;
+    }
+
+    public void SaveData(GameData data)
+    {
+        data.Health = _health;
     }
 }

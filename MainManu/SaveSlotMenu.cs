@@ -24,7 +24,7 @@ public class SaveSlotMenu : Menu
         DiscableMenuButtons();
         if(_isLoadingGame)
         {
-            DataManager.instance.ChangeSelectedProfileId(saveSlot.GetProfileId());
+            DataManager.Instance.ChangeSelectedProfileId(saveSlot.GetProfileId());
             SaveGameAndLoadScene();
         }
         else if(saveSlot.HasData)
@@ -47,17 +47,17 @@ public class SaveSlotMenu : Menu
     }
     private void StartNewGame(SaveSlot saveSlot)
     {
-        DataManager.instance.ChangeSelectedProfileId(saveSlot.GetProfileId());
-        DataManager.instance.NewGame();
+        DataManager.Instance.ChangeSelectedProfileId(saveSlot.GetProfileId());
+        DataManager.Instance.NewGame();
         SaveGameAndLoadScene();
     }
     public void OnClearClicked(SaveSlot saveSlot)
     {
         DiscableMenuButtons();
-        _confirmationPopup.ActivateMenu("Are you sureeyot want delte this  saved data?",
+        _confirmationPopup.ActivateMenu("Are you sure you want delte this  saved data?",
             () =>
             {
-                DataManager.instance.DelteProfile(saveSlot.GetProfileId());
+                DataManager.Instance.DelteProfile(saveSlot.GetProfileId());
                 ActivateMenu(_isLoadingGame);
             },
             () =>
@@ -75,7 +75,7 @@ public class SaveSlotMenu : Menu
     {
         gameObject.SetActive(true);
         _isLoadingGame = isLoadingGame;
-        Dictionary<string, GameData> profilesGameData = DataManager.instance.GetAllPrrofilesGameData();
+        Dictionary<string, GameData> profilesGameData = DataManager.Instance.GetAllPrrofilesGameData();
         _backButton.interactable = true;   
         GameObject firstSelected = _backButton.gameObject;
         foreach (var item in saveSlots)
@@ -101,7 +101,7 @@ public class SaveSlotMenu : Menu
     }
     private void SaveGameAndLoadScene()
     {
-        DataManager.instance.SaveGame();
+        DataManager.Instance.SaveGame();
         SceneManager.LoadSceneAsync(new GameData().SaveSceneName);
     }
 

@@ -27,17 +27,23 @@ public class DataManager : MonoBehaviour
     private string _selectedProfileId  = "";
 
     private Coroutine _autoSaveCoroutine;
-    public static DataManager instance { get; private set; }
+    public static DataManager Instance { get; private set; }
+    private static bool _firstActivate = true;
 
     private void Awake()
     {
-        if(instance != null)
+        if(Instance != null)
         {
             Destroy(gameObject);
         }
-        instance = this;
+        Instance = this;
         DontDestroyOnLoad(gameObject);
-        PlayerUpgrade.UpgradePut();
+        if(_firstActivate)
+        {
+            PlayerUpgrade.UpgradePut();
+            print("Upgrade Put");
+            _firstActivate = false;
+        }
         _dateHandler = new FileDateHandler(Application.persistentDataPath, _fileName, _useEncryption);
 
         InitializeSelectedProfileId();
@@ -54,8 +60,8 @@ public class DataManager : MonoBehaviour
     {
         _datePersistanceObject = FindAllDataPersistanceObject();
         LoadGame();
-        if (_autoSaveCoroutine != null)
-            StopCoroutine(_autoSaveCoroutine);
+        //if (_autoSaveCoroutine != null)
+        //    StopCoroutine(_autoSaveCoroutine);
         _autoSaveCoroutine = StartCoroutine(AutoSave());
     }
     public void ChangeSelectedProfileId(string newProfileeId)
@@ -86,8 +92,8 @@ public class DataManager : MonoBehaviour
     {
         if (_disableDataPersistence)
             return;
-        //if (SceneManager.GetActiveScene().rootCount == 0)
-        //    return;
+        if (SceneManager.GetActiveScene().rootCount == 0)
+            return;
         _gameDate = _dateHandler.Load(_selectedProfileId);
         if (_initializeDataIfNull && _gameDate == null)
             NewGame();
@@ -103,7 +109,8 @@ public class DataManager : MonoBehaviour
         if (gameObject == null /*|| SceneManager.GetActiveScene().rootCount == 0*/)
             return;
         foreach (var item in _datePersistanceObject)
-            item.SaveData(_gameDate);
+            if(item !=  null)
+                item.SaveData(_gameDate);
         _gameDate.LastUpdated = DateTime.Now.ToBinary();
         _dateHandler.Save(_gameDate,  _selectedProfileId);
     }
@@ -131,7 +138,7 @@ public class DataManager : MonoBehaviour
         {
             yield return new WaitForSeconds(_autoSaveTimeSeconds);
             SaveGame();
-            Debug.Log("Auto Save 1229 delte");
+            print("autoSave");
         }
     }
 }

@@ -21,7 +21,7 @@ public class MainManu : Menu, IDatePersistance
     }
     private void DisableButtonsDependingOnData()
     {
-        if (!DataManager.instance.HasGameDate())
+        if (!DataManager.Instance.HasGameDate())
         {
             _continueGameButton.interactable = false;
             _loadGameButton.interactable = false;
@@ -40,7 +40,7 @@ public class MainManu : Menu, IDatePersistance
     public void OnContinueGameClick()
     {
         DisableMenuButtons();
-        DataManager.instance.SaveGame();
+        DataManager.Instance.SaveGame();
         SceneManager.LoadSceneAsync(_sceneName);
     }
 

@@ -18,6 +18,7 @@ public class Player : MonoBehaviour, IDatePersistance
 
     [SerializeField] private bool _noBlood = false;
     [SerializeField] private GameObject _slideDust;
+    [SerializeField] private ActivateInventary _inventary;
 
     private PlayerGun _gun;
     private PlayerSword _sword;
@@ -55,7 +56,7 @@ public class Player : MonoBehaviour, IDatePersistance
 
         gameObject.tag = "Player";
     }
-    private void Update ()
+    private void Update()
     {
         InputManager();
     }
@@ -125,7 +126,9 @@ public class Player : MonoBehaviour, IDatePersistance
     }
     private void PlayerMovement(float inputX)
     {
-        if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling)
+        if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling && _animator.GetCurrentAnimatorStateInfo(0).IsName("Fall"))
+            AirAtack();
+        else if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling)
             Atack();
         else if (Input.GetButtonDown("Block") && !_rolling && !PlayerInfo.DoNotTakeDamage)
             Block();
@@ -137,6 +140,8 @@ public class Player : MonoBehaviour, IDatePersistance
             Jump();
         else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[2]))
             ChangeWeapon();
+        else if (Input.GetButtonDown("Inventary"))
+            ActivateInventary();
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
             Run();
         else
@@ -150,10 +155,17 @@ public class Player : MonoBehaviour, IDatePersistance
         Destroy(GetComponent<Player>());
         Destroy(GetComponent<PlayerHealth>());
         gameObject.layer = 8;
+        Destroy(gameObject.GetComponent<Player>());
+        Destroy(gameObject.GetComponent<PlayerUpgrade>());
     }
     public void Hurt()
     {
         _animator.SetTrigger("Hurt");
+    }
+    private void AirAtack()
+    {
+        if (PlayerInfo.CurentWapone == PlayerInfo.WeaponType.Sword)
+            _sword.AirAtack();
     }
     private void Atack()
     {
@@ -177,6 +189,7 @@ public class Player : MonoBehaviour, IDatePersistance
         _rigidbody.velocity = new Vector2(_facingDirection * _rollForce, _rigidbody.velocity.y);
         //gameObject.layer = 9;
     }
+
     private bool drop = false;
     private void Drop()
     {
@@ -192,6 +205,19 @@ public class Player : MonoBehaviour, IDatePersistance
             _dropParticle.Play();
             drop = false;
         }
+        else if (_rolling && collision.gameObject.tag == "Enemy")
+        {
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (_rolling && collision.gameObject.tag == "Enemy")
+        {
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+            gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+        }
     }
     private void Jump()
     {
@@ -200,7 +226,7 @@ public class Player : MonoBehaviour, IDatePersistance
         _animator.SetBool("Grounded", _grounded);
         if (_rigidbody.drag == 0.5)
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce);
-        else if(_rigidbody.drag == 2)
+        else if (_rigidbody.drag == 2)
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce * 1.3f);
         _groundSensor.Disable(0.2f);
     }
@@ -210,6 +236,10 @@ public class Player : MonoBehaviour, IDatePersistance
             PlayerInfo.CurentWapone = PlayerInfo.WeaponType.Gun;
         else if (PlayerInfo.CurentWapone == PlayerInfo.WeaponType.Gun)
             PlayerInfo.CurentWapone = PlayerInfo.WeaponType.Sword;
+    }
+    private void ActivateInventary()
+    {
+        _inventary.ActivateInventory();
     }
     private void Run()
     {
@@ -246,6 +276,9 @@ public class Player : MonoBehaviour, IDatePersistance
         _changeSize.StandartSize(_boxCollider);
         gameObject.layer = 3;
         PlayerInfo.DoNotTakeDamage = false;
+        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+        gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+        gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     private void AE_SlideDust()
     {

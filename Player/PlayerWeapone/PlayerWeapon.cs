@@ -13,7 +13,7 @@ public abstract class PlayerWeapon : Weapon
         CurentWeapon = weaponTipe;
         GetAllComponent();
     }
-    public void AtackConstruct(string animName)
+    public void AtackConstruct(string animName, bool airAttack = false)
     {
         if (!_isWeaponCollDown)
         {
@@ -22,6 +22,8 @@ public abstract class PlayerWeapon : Weapon
                 _currentAttack = 1;
             if (PlayerInfo.TimeSinceAttack > 1.0f)
                 _currentAttack = 1;
+            if(airAttack)
+                _currentAttack = 3;
             _animator.SetTrigger("Attack" + _currentAttack);
             PlayerInfo.TimeSinceAttack = 0.0f;
             WeaponActivate();

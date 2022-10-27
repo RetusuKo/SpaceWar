@@ -19,4 +19,8 @@ public class PlayerSword : PlayerWeapon
     {
         AtackConstruct("Attack");
     }
+    public void AirAtack()
+    {
+        AtackConstruct("Attack", true);
+    }
 }
