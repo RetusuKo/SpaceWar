@@ -5,15 +5,20 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour, IDatePersistance
 {
+    [SerializeField] private float _maxHealth = 3;
     [SerializeField] private float _health = 3;
 
-    [SerializeField] private List<Image> _healtImage;
+    [SerializeField] private HealthManager _healthManager;
 
+    public float MaxHealth { get { return _maxHealth; } }
+    public float Health { get { return _health; } }
+    private void Awake()
+    {
+        _health = _maxHealth;
+    }
     private void Start()
     {
-        for (int i = 0; i < _healtImage.Count; i++)
-            if (i < _health)
-                _healtImage[i].gameObject.SetActive(true);
+        _healthManager.ShowHealthInGame();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,7 +44,6 @@ public class PlayerHealth : MonoBehaviour, IDatePersistance
     }
     private void TakeDamage(float damage)
     {
-
         _health -= damage;
         StartCoroutine(WaitAfterDamage());
         Player player = GetComponent<Player>();
@@ -47,7 +51,11 @@ public class PlayerHealth : MonoBehaviour, IDatePersistance
             player.Hurt();
         else if (_health <= 0)
             player.Dead();
-        _healtImage[(int)_health].enabled = false;
+        _healthManager.ShowHealthInGame();
+    }
+    public void Dead()
+    {
+        _healthManager.Dead();
     }
     private IEnumerator WaitAfterDamage()
     {
@@ -55,14 +63,30 @@ public class PlayerHealth : MonoBehaviour, IDatePersistance
         yield return new WaitForSeconds(PlayerInfo.NoDomageMiliSec);
         PlayerInfo.DoNotTakeDamage = false;
     }
-
+    public bool HealthRegen()
+    {
+        if (_health < _maxHealth)
+        {
+            _health++;
+            _healthManager.ShowHealthInGame();
+            return true;
+        }
+        return false;
+    }
+    public void HealthUpgrade()
+    {
+        _maxHealth++;
+    }
     public void LoadDate(GameData data)
     {
-        _health = data.Health;
+        _health = data.CurrentHealth;
+        _maxHealth = data.MaxHealth;
+        _healthManager.ShowHealthInGame();
     }
 
     public void SaveData(GameData data)
     {
-        data.Health = _health;
+        data.CurrentHealth = _health;
+        data.MaxHealth = _maxHealth;
     }
 }

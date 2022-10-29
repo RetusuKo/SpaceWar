@@ -153,6 +153,7 @@ public class Player : MonoBehaviour, IDatePersistance
         _animator.SetBool("noBlood", _noBlood);
         _animator.SetTrigger("Death");
         Destroy(GetComponent<Player>());
+        GetComponent<PlayerHealth>().Dead();
         Destroy(GetComponent<PlayerHealth>());
         gameObject.layer = 8;
         Destroy(gameObject.GetComponent<Player>());
