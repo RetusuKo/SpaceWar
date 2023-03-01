@@ -113,6 +113,7 @@ public class DataManager : MonoBehaviour
                 item.SaveData(_gameDate);
         _gameDate.LastUpdated = DateTime.Now.ToBinary();
         _dateHandler.Save(_gameDate,  _selectedProfileId);
+        print("save");
     }
     private void OnApplicationQuit()
     {

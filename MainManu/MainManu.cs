@@ -12,7 +12,7 @@ public class MainManu : Menu, IDatePersistance
     [SerializeField] private Button _continueGameButton;
     [SerializeField] private Button _loadGameButton;
 
-    private string _startSceneName = "Lvl 1";
+    //private string _startSceneName = "Lvl 1";
     private string _sceneName;
 
     private void Start()

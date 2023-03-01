@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyWatchPlayerInZone : MonoBehaviour
@@ -15,6 +14,7 @@ public class EnemyWatchPlayerInZone : MonoBehaviour
 
     private Color _gizmoIdleColor = new Color(0, 1, 0, 0.2f);
     private Color _gizmoDetectedColor = new Color(1, 0, 0, 0.2f);
+
     private bool _showGizmo = true;
     private bool _isAtacking = false;
     private bool _playerDetected;
@@ -65,9 +65,7 @@ public class EnemyWatchPlayerInZone : MonoBehaviour
         {
             Gizmos.color = _gizmoIdleColor;
             if (_playerDetected)
-            {
                 Gizmos.color = _gizmoDetectedColor;
-            }
             Gizmos.DrawCube((Vector2)_detectorOrigin.position + _detectorOriginalOffset, _detectorSize);
         }
     }

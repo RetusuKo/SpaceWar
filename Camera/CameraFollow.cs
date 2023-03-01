@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour, IDatePersistance
@@ -7,27 +5,25 @@ public class CameraFollow : MonoBehaviour, IDatePersistance
     [SerializeField] private Vector2 _followOffset;
     [SerializeField] private GameObject _followObject;
     [SerializeField] private float _speed = 3f;
-    [SerializeField] private float _maxMinusPositio = -1f;
+    [SerializeField] private float _maxMinusPosition = -1f;
 
-    private Vector2 _threshold;
+    private Vector2 _followThreshold;
     private Rigidbody2D _rigidBody;
-    private bool _move = true;
+    private bool _canMove = true;
     void Start()
     {
         if (_followObject == null)
         {
-            _move = false;
+            _canMove = false;
+            return;
         }
-        else
-        {
-            _threshold = CalculateThreshold();
-            _rigidBody = _followObject.GetComponent<Rigidbody2D>();
-            _move = true;
-        }
+        _followThreshold = CalculateThreshold();
+        _rigidBody = _followObject.GetComponent<Rigidbody2D>();
+        _canMove = true;
     }
     void FixedUpdate()
     {
-        if (_move)
+        if (_canMove)
             MoveCamera();
     }
     private void MoveCamera()
@@ -36,28 +32,27 @@ public class CameraFollow : MonoBehaviour, IDatePersistance
         float xDifference = Vector2.Distance(Vector2.right * transform.position.x, Vector2.right * follow.x);
         float yDifference = Vector2.Distance(Vector2.up * transform.position.y, Vector2.up * follow.y);
         Vector3 newPosition = transform.position;
-        if (Mathf.Abs(xDifference) >= _threshold.x)
+        if (Mathf.Abs(xDifference) >= _followThreshold.x)
         {
             newPosition.x = follow.x;
         }
-        if (Mathf.Abs(yDifference) >= _threshold.y)
+        if (Mathf.Abs(yDifference) >= _followThreshold.y)
         {
             newPosition.y = follow.y;
         }
         float moveSpeed = _rigidBody.velocity.magnitude > _speed ? _rigidBody.velocity.magnitude : _speed;
         transform.position = Vector3.MoveTowards(transform.position, newPosition, moveSpeed * Time.deltaTime);
-        if (transform.position.y <= _maxMinusPositio)
+        if (transform.position.y <= _maxMinusPosition)
         {
-            gameObject.transform.position = new Vector3(transform.position.x, _maxMinusPositio, transform.position.z);
+            gameObject.transform.position = new Vector3(transform.position.x, _maxMinusPosition, transform.position.z);
         }
     }
     private Vector3 CalculateThreshold()
     {
         Rect aspect = Camera.main.pixelRect;
-        Vector2 t = new Vector2(Camera.main.orthographicSize * aspect.width / aspect.height, Camera.main.orthographicSize);
-        t.x -= _followOffset.x;
-        t.y -= _followOffset.y;
-        return t;
+        float verticalSize = Camera.main.orthographicSize;
+        float horizontalSize = verticalSize * aspect.width / aspect.height;
+        return new Vector2(horizontalSize - _followOffset.x, verticalSize - _followOffset.y);
     }
     private void OnDrawGizmos()
     {

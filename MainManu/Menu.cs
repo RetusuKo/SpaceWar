@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
-    [SerializeField] private Button _firstSelected;
+    [SerializeField] protected Button _firstSelected;
 
     protected virtual void OnEnable()
     {

@@ -11,12 +11,8 @@ public abstract class Enemy : MonoBehaviour
     protected float _speed;
     protected float _damage;
 
-    public float Damage
-    {
-        get { return _damage; }
-    }
+    public float Damage => _damage;
 
-    /*protected abstract void Movement();*/
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -25,7 +21,7 @@ public abstract class Enemy : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
         gameObject.tag = "Enemy";
-        gameObject.layer = 11;
+        gameObject.layer = LayerMask.NameToLayer("Enemy"); ;
     }
     public abstract void TakeDamage(float takenDamage);
     protected void Initalize(float speed, float damage, float health)
@@ -37,10 +33,6 @@ public abstract class Enemy : MonoBehaviour
     }
     protected int Direction()
     {
-        if (_spriteRenderer.flipX)
-        {
-            return -1;
-        }
-        return 1;
+        return _spriteRenderer.flipX ? -1 : 1;
     }
 }

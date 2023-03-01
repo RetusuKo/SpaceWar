@@ -58,7 +58,8 @@ public class Player : MonoBehaviour, IDatePersistance
     }
     private void Update()
     {
-        InputManager();
+        if (PlayerInfo.CanMove)
+            InputManager();
     }
     private void InputManager()
     {

@@ -6,6 +6,7 @@ public class HealthManager : MonoBehaviour
 {
     [SerializeField] private List<Health> _healths;
     [SerializeField] private PlayerHealth _playerHealth;
+
     public void ShowHealthInGame()
     {
         for (int i = 0; i < _healths.Count; i++)

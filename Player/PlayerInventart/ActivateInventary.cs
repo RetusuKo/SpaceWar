@@ -8,6 +8,6 @@ public class ActivateInventary : MonoBehaviour
     {
         bool activate = gameObject.activeSelf;
         gameObject.SetActive(!activate);
-        Time.timeScale = !activate ? 1.0f : 0.0f;
+        //Pause.PauseGame(activate);
     }
 }

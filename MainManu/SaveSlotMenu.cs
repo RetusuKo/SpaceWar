@@ -104,7 +104,6 @@ public class SaveSlotMenu : Menu
         DataManager.Instance.SaveGame();
         SceneManager.LoadSceneAsync(new GameData().SaveSceneName);
     }
-
     public void DeActivate()
     {
         gameObject.SetActive(false);

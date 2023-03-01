@@ -6,18 +6,17 @@ public class EnemyWalkPoint : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _spriteRenderer;
 
+    private static readonly Dictionary<string, bool> _walkPointDirections = new Dictionary<string, bool>()
+    {
+        {"WalkPoint1", false},
+        {"WalkPoint2", true},
+    };
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy")
+        if (collision.CompareTag("Enemy") && _walkPointDirections.TryGetValue(gameObject.name, out bool flipX))
         {
-            if (gameObject.name == "WalkPoint1")
-            {
-                _spriteRenderer.flipX = false;
-            }
-            else if (gameObject.name == "WalkPoint2")
-            {
-                _spriteRenderer.flipX = true;
-            }
+            _spriteRenderer.flipX = flipX;
         }
     }
 }

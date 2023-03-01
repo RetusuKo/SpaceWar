@@ -10,7 +10,10 @@ public class TakeUpgrade : Item, IDatePersistance
         if (_taken)
             Destroy(gameObject);
     }
-    public void SaveData(GameData data){}
+    public void SaveData(GameData data)
+    {
+
+    }
     protected override void TakeItem(Collider2D collision)
     {
         PlayerUpgrade.UpgradeChangeBool(_upgradeName);
