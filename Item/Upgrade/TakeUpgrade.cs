@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class TakeUpgrade : Item, IDatePersistance
 {
     [SerializeField] private string _upgradeName;
+    [SerializeField] event EventHandler OnItemTake;
     public void LoadDate(GameData data)
     {
         data.PlayerUpgrade.TryGetValue(_upgradeName, out _taken);

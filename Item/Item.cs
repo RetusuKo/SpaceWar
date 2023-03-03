@@ -17,8 +17,7 @@ public abstract class Item : MonoBehaviour
     }
     protected void AfterTakeObject(Collider2D collision)
     {
-        var _audio = collision.GetComponent<AudioSource>();
-        _audio.PlayOneShot(_collectClip);
+        collision.GetComponent<AudioSource>().PlayOneShot(_collectClip);
         _taken = true;
         Destroy(gameObject);
     }

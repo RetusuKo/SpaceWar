@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, IDatePersistance
 {
@@ -37,7 +38,15 @@ public class Player : MonoBehaviour, IDatePersistance
     private bool _rolling = false;
     private int _facingDirection = 1;
     private float _delayToIdle = 0.0f;
-
+    private enum Action
+    {
+        None,
+        Attack,
+        Block,
+        Roll,
+        Jump,
+        Drop
+    }
     private void Awake()
     {
         _changeSize = gameObject.AddComponent(typeof(ChangeSize)) as ChangeSize;
@@ -92,24 +101,20 @@ public class Player : MonoBehaviour, IDatePersistance
     }
     private void Rotation(float inputX)
     {
-        if (inputX > 0)
-        {
-            _spriteRenderer.flipX = false;
-            _facingDirection = 1;
-            _animator.SetBool("DirectionLeft", true);
-        }
-
-        else if (inputX < 0)
-        {
-            _spriteRenderer.flipX = true;
-            _facingDirection = -1;
-            _animator.SetBool("DirectionLeft", false);
-        }
+        bool flip = inputX < 0 ? true : false;
+        _spriteRenderer.flipX = flip;
+        _facingDirection = flip ? -1 : 1;
+        _animator.SetBool("DirectionLeft", flip);
     }
     private void Move(float inputX)
     {
         if (!_rolling)
-            _rigidbody.velocity = new Vector2(inputX * _speed, _rigidbody.velocity.y);
+        {
+            Vector2 velocity = _rigidbody.velocity;
+            velocity.x = inputX * _speed;
+            _rigidbody.velocity = velocity;
+        }
+        //_rigidbody.velocity = new Vector2(inputX * _speed, _rigidbody.velocity.y);
     }
     private void SetSpeed()
     {
@@ -120,33 +125,51 @@ public class Player : MonoBehaviour, IDatePersistance
     {
         bool isOnWall = _wallSensorR1.State() && _wallSensorR2.State() || (_wallSensorL1.State() && _wallSensorL2.State());
         _animator.SetBool("WallSlide", isOnWall);
-        if (_animator.GetBool("WallSlide"))
-            _rigidbody.drag = 2;
-        else if (!_animator.GetBool("WallSlide"))
-            _rigidbody.drag = 0.5f;
+        _rigidbody.drag = isOnWall ? 2 : 0.5f;
     }
     private void PlayerMovement(float inputX)
     {
-        if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling && _animator.GetCurrentAnimatorStateInfo(0).IsName("Fall"))
-            AirAtack();
-        else if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling)
-            Atack();
-        else if (Input.GetButtonDown("Block") && !_rolling && !PlayerInfo.DoNotTakeDamage)
-            Block();
-        else if (Input.GetButtonDown("Roll") && !_rolling && !_animator.GetBool("WallSlide"))
-            Roll();
-        else if (Input.GetButtonDown("Jump") && Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[1]))
-            Drop();
-        else if (Input.GetButtonDown("Jump") && _grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Wall Slide") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[3]))
-            Jump();
-        else if (Input.GetButtonDown("ChangeWeapon") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[2]))
-            ChangeWeapon();
+        if (Input.GetButton("Fire1"))
+        {
+            if (PlayerInfo.TimeSinceAttack > 0.3f && !_rolling && _animator.GetCurrentAnimatorStateInfo(0).IsName("Fall"))
+                AirAtack();
+            else if (Input.GetButton("Fire1") && PlayerInfo.TimeSinceAttack > 0.3f && !_rolling)
+                Atack();
+        }
+        else if (Input.GetButtonDown("Roll"))
+        {
+            if (!_rolling && !_animator.GetBool("WallSlide"))
+                Roll();
+        }
+        else if (Input.GetButtonDown("Jump"))
+        {
+            if (Input.GetButton("Vertical") && !_grounded && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[1]))
+                Drop();
+            else if (_grounded && !_rolling || Input.GetButtonDown("Jump") && _animator.GetCurrentAnimatorStateInfo(0).IsName("Wall Slide") && PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[3]))
+                Jump();
+        }
+        else if (Input.GetButtonDown("Block"))
+        {
+            if (!_rolling && !PlayerInfo.DoNotTakeDamage)
+                Block();
+        }
+        else if (Input.GetButtonDown("ChangeWeapon"))
+        {
+            if (PlayerUpgrade.UpgradeCheck(PlayerUpgrade.UpgradesName[2]))
+                ChangeWeapon();
+        }
         else if (Input.GetButtonDown("Inventary"))
+        {
             ActivateInventary();
+        }
         else if (Mathf.Abs(inputX) > Mathf.Epsilon)
+        {
             Run();
+        }
         else
+        {
             Idle();
+        }
     }
     #region
     public void Dead()
@@ -189,7 +212,6 @@ public class Player : MonoBehaviour, IDatePersistance
         _rolling = true;
         _animator.SetTrigger("Roll");
         _rigidbody.velocity = new Vector2(_facingDirection * _rollForce, _rigidbody.velocity.y);
-        //gameObject.layer = 9;
     }
 
     private bool drop = false;
@@ -257,9 +279,7 @@ public class Player : MonoBehaviour, IDatePersistance
     private void ResetColiderAnim()
     {
         if (_grounded)
-        {
             _animator.SetBool("Drop", false);
-        }
     }
     #endregion
     private IEnumerator WaitForDoNotDamage()
@@ -300,8 +320,7 @@ public class Player : MonoBehaviour, IDatePersistance
 
     public void LoadDate(GameData data)
     {
-        if (data.PlayerPosition != null)
-            gameObject.transform.position = data.PlayerPosition;
+        gameObject.transform.position = data.PlayerPosition;
     }
 
     public void SaveData(GameData data)

@@ -131,7 +131,7 @@ public class FileDateHandler
             string fullPath = Path.Combine(_dataDirPath, profileId, _dataFileName);
             if (!File.Exists(fullPath))
             {
-                Debug.LogWarning($"Skiping dir wheen  loading all profiles{profileId}");
+                Debug.LogWarning($"Skiping dir wheen loading all profiles{profileId}");
                 continue;
             }
 
